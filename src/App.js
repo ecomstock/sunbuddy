@@ -6,9 +6,16 @@ class App extends Component {
 
   	render() {
 		return (
-			<div className="App-container">
-				
-			</div>
+			<body>
+				<div className="container">
+					<div className="header">
+						<p>Sunbuddy</p>
+					</div>
+					<div className="content">
+						<p>kjkl;jkl;jkl;</p>
+					</div>
+				</div>
+			</body>
 		);
   	}
 }
