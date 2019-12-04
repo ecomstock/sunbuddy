@@ -1,11 +1,22 @@
 
-.App-container {
-	background-color: #282c34;
+body {
+    background-color: white;
+    margin: 10%;
+}
+
+.container {
+	/* background-color: tomato;
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	font-size: calc(10px + 2vmin);
+	color: white; */
+
+	background-color: tomato;
+    padding: 10px;
+    border-radius: 5px;
+	min-height: 300px;
 	color: white;
 }
