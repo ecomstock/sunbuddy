@@ -1,21 +1,20 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
 
   	render() {
 		return (
-			<body>
-				<div className="container">
-					<div className="header">
-						<p>Sunbuddy</p>
-					</div>
-					<div className="content">
-						<p>kjkl;jkl;jkl;</p>
-					</div>
+			<div className="container">
+				<div className="header">
+					<img src="https://via.placeholder.com/75" />
+					<p>Sunbuddy</p>
 				</div>
-			</body>
+				<div className="content">
+					<img src="https://via.placeholder.com/25" />
+					<p></p>
+				</div>
+			</div>
 		);
   	}
 }
