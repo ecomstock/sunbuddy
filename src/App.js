@@ -14,11 +14,13 @@ class App extends Component {
 		const latitude  = position.coords.latitude;
 		const longitude = position.coords.longitude;
 		const latlon = [latitude, longitude];
+		this.runFetch(latlon);
 	}
 
 	getNav = () => navigator.geolocation.getCurrentPosition(this.getLatLon);
 	
 	runFetch = latlon => {
+		console.log(latlon);
 		const latitude = latlon[0];
 		const longitude = latlon[1];
 		fetch("https://api.example.com/items")
