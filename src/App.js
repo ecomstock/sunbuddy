@@ -23,14 +23,20 @@ class App extends Component {
 		console.log(latlon);
 		const latitude = latlon[0];
 		const longitude = latlon[1];
-		fetch("https://api.example.com/items")
+		const url = `https://api.openuv.io/api/v1/uv?lat=${latitude}&lng=${longitude}`
+		fetch(url, {
+			headers: {
+				"x-access-token" : "8a2198fe4c4d3912dbf995040b2ff964"
+			}
+		})
 			.then(res => res.json())
 			.then(
 				(result) => {
-				this.setState({
-					isLoaded: true,
-					items: result.items
-				});
+					console.log(result);
+				// this.setState({
+				// 	isLoaded: true,
+				// 	items: result.items
+				// });
 				},
 				// Note: it's important to handle errors here
 				// instead of a catch() block so that we don't swallow
