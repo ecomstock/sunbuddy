@@ -9,8 +9,7 @@ class App extends Component {
 		this.getNav();
 	}
 
-	// success = (position) => {
-	getLatLon (position) {
+	getLatLon = position => {
 		console.log("nav success");
 		const latitude  = position.coords.latitude;
 		const longitude = position.coords.longitude;
@@ -24,7 +23,7 @@ class App extends Component {
 	}
 
 	getNav () {
-		navigator.geolocation.getCurrentPosition(this.getLatLon.bind(this));
+		navigator.geolocation.getCurrentPosition(this.getLatLon);
 	}
 
 	runFetch (latlon) {
