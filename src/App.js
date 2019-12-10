@@ -22,9 +22,8 @@ class App extends Component {
 		console.log("hi");
 	}
 
-	getNav () {
-		navigator.geolocation.getCurrentPosition(this.getLatLon);
-	}
+	getNav = () => navigator.geolocation.getCurrentPosition(this.getLatLon);
+	
 
 	runFetch (latlon) {
 		const latitude = latlon[0];
