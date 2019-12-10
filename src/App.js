@@ -18,8 +18,7 @@ class App extends Component {
 
 	getNav = () => navigator.geolocation.getCurrentPosition(this.getLatLon);
 	
-
-	runFetch (latlon) {
+	runFetch = latlon => {
 		const latitude = latlon[0];
 		const longitude = latlon[1];
 		fetch("https://api.example.com/items")
