@@ -14,12 +14,6 @@ class App extends Component {
 		const latitude  = position.coords.latitude;
 		const longitude = position.coords.longitude;
 		const latlon = [latitude, longitude];
-		this.sayHi();
-		console.log(latitude);
-	}
-
-	sayHi () {
-		console.log("hi");
 	}
 
 	getNav = () => navigator.geolocation.getCurrentPosition(this.getLatLon);
