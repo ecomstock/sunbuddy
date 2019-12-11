@@ -14,12 +14,12 @@ class App extends Component {
 		const latitude  = position.coords.latitude;
 		const longitude = position.coords.longitude;
 		const latlon = [latitude, longitude];
-		this.runFetch(latlon);
+		this.getUVData(latlon);
 	}
 
 	getNav = () => navigator.geolocation.getCurrentPosition(this.getLatLon);
 	
-	runFetch = latlon => {
+	getUVData = latlon => {
 		console.log(latlon);
 		const latitude = latlon[0];
 		const longitude = latlon[1];
@@ -32,7 +32,7 @@ class App extends Component {
 			.then(res => res.json())
 			.then(
 				(result) => {
-					console.log(result);
+					this.parseUVData(result);
 				// this.setState({
 				// 	isLoaded: true,
 				// 	items: result.items
@@ -48,6 +48,10 @@ class App extends Component {
 				});
 				}
 			)
+	}
+
+	parseUVData = data => {
+		console.log(data);
 	}
 
 	element = (
