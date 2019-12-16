@@ -13,10 +13,10 @@ class App extends Component {
 	getLatLon = position => {
 		const latitude  = position.coords.latitude;
 		const longitude = position.coords.longitude;
-		// const latlon = [latitude, longitude];
-		const latlon = [23, -110];
+		const latlon = [latitude, longitude];
+		// const latlon = [23, -110];
 		this.getWeatherData(latlon);
-		// this.getSunData(latlon);
+		this.getSunData(latlon);
 	}
 	
 	getWeatherData = latlon => {
@@ -46,35 +46,13 @@ class App extends Component {
 			)
 	}
 
-	// getSunData = latlon => {
-	// 	console.log(latlon);
-	// 	const lat = latlon[0];
-	// 	const lon = latlon[1];
-	// 	const url = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/c9390ab45282a0eb042232d180560a3d/${lat},${lon}`;
-	// 	fetch(url)
-	// 	// const id = "75eeb11ea6d63fece113632a7e10d285";
-	// 	// const url = `http://api.openweathermap.org/data/2.5/uvi/forecast?appid=${id}&lat=${lat}&lon=${lon}&cnt=1`
-	// 	// fetch(url)
-	// 		.then(res => res.json())
-	// 		.then(
-	// 			(result) => {
-	// 				this.distributeSunData(result);
-	// 			// this.setState({
-	// 			// 	isLoaded: true,
-	// 			// 	items: result.items
-	// 			// });
-	// 			},
-	// 			// Note: it's important to handle errors here
-	// 			// instead of a catch() block so that we don't swallow
-	// 			// exceptions from actual bugs in components.
-	// 			(error) => {
-	// 			this.setState({
-	// 				isLoaded: true,
-	// 				error
-	// 			});
-	// 			}
-	// 		)
-	// }
+	getSunData = (latlon) => {
+		const SunCalc = require("suncalc");
+		const lat = latlon[0];
+		const lon = latlon[1];
+		const data = SunCalc.getTimes(new Date(), lat, lon);
+		console.log(data);
+	}
 
 	sortByDay = data => {
 		const today = new Date().getDay();
