@@ -76,23 +76,26 @@ class App extends Component {
 	// 		)
 	// }
 
-	distributeWeatherData = data => {
-		this.getExposureHours(data);
-		
-		const hourly = data.hourly.data;
-		
-	
+	sortByDay = data => {
+		const today = new Date().getDay();
+		const tomorrow = (new Date().getDay() + 1);
+		const todayData = data
+			.filter(dataPoint => new Date(dataPoint.time * 1000).getDay() === tomorrow);
+		const tomorrowData = data
+			.filter(dataPoint => new Date(dataPoint.time * 1000).getDay() === tomorrow);
 	}
 
-	// getDay = data {
-	// 	const today = new Date().getDay();
-	// }
+	distributeWeatherData = data => {
+		this.getExposureHours(data);
+	}
+
+	
 
 	getExposureHours = data => {
 		const hourly = data.hourly.data;
 		const exposureHours = hourly
 			.filter(dataPoint => dataPoint.uvIndex >= 2);
-			// .filter(dataPoint => new Date(dataPoint.time * 1000).getDay() === today)
+			
 			// .map(dataPoint => {
 			// 	const returnObj = {};
 			// 	returnObj.time = new Date(dataPoint.time * 1000).toLocaleTimeString();
@@ -101,6 +104,8 @@ class App extends Component {
 		console.log(exposureHours);
 		//return `${criticalUV[0].time} - ${criticalUV[criticalUV.length-1].time}`;
 	}
+
+	
 
 	// getPrecipHours = data => {
 
