@@ -89,8 +89,6 @@ class App extends Component {
 		this.getExposureHours(data);
 	}
 
-	
-
 	getExposureHours = data => {
 		const hourly = data.hourly.data;
 		const exposureHours = hourly
