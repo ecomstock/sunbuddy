@@ -6,6 +6,7 @@ class App extends Component {
 
 	componentDidMount () {
 		this.getNav();
+		console.log("ready");
 	}
 
 	getNav = () => navigator.geolocation.getCurrentPosition(this.getLatLon);
@@ -48,10 +49,26 @@ class App extends Component {
 
 	getSunData = (latlon) => {
 		const SunCalc = require("suncalc");
+		const data = {};
 		const lat = latlon[0];
 		const lon = latlon[1];
-		const data = SunCalc.getTimes(new Date(), lat, lon);
-		console.log(data);
+		const today = new Date();
+		const tomorrow = new Date(today);
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		const todaySunData = SunCalc.getTimes(today, lat, lon);
+		const tomorrowSunData = SunCalc.getTimes(tomorrow, lat, lon);
+		data.todaySunData = todaySunData;
+		data.tomorrowSunData = tomorrowSunData;
+		this.distributeSunData(data);
+	}
+
+	distributeSunData = data => {
+		const currently = new Date(); 
+		if (currently > data.todaySunData.dusk) {
+			console.log(data.tomorrowSunData);
+		} else {
+			console.log(data.todaySunData);
+		}
 	}
 
 	sortByDay = data => {
@@ -70,7 +87,7 @@ class App extends Component {
 	getExposureHours = data => {
 		const hourly = data.hourly.data;
 		const exposureHours = hourly
-			.filter(dataPoint => dataPoint.uvIndex >= 2);
+			.filter(dataPoint => dataPoint.uvIndex >= 1);
 			
 			// .map(dataPoint => {
 			// 	const returnObj = {};
@@ -90,34 +107,36 @@ class App extends Component {
 	exposureTime = "Blah";
 
 	element = (
-		<Card className="card">
-			<div className="content">
-				<img src="https://via.placeholder.com/75" />
-				<p className="text-large">Portland</p>
-				<p>today</p>
-				<div className="sub-container">
-					<p>32</p>
-					<p className="text-large">40</p>
-					<p>42</p>
+		<div className="container">
+			<Card className="card">
+				<div className="content">
+					<img src="https://via.placeholder.com/75" />
+					<p className="text-large">Portland</p>
+					<p>today</p>
+					<div className="sub-container">
+						<p>32</p>
+						<p className="text-large">40</p>
+						<p>42</p>
+					</div>
+					<div className="sub-container">
+						<img src="https://via.placeholder.com/25" />
+						<p>{this.exposureTime}</p>
+					</div>
+					<div className="sub-container">
+						<img src="https://via.placeholder.com/25" />
+						<p>7:10 am - 5:03 pm</p>
+					</div>
+					<div className="sub-container">
+						<img src="https://via.placeholder.com/25" />
+						<p>7:10 am - 5:03 pm</p>
+					</div>
+					<div className="sub-container">
+						<img src="https://via.placeholder.com/25" />
+						<p>7:10 am - 5:03 pm</p>
+					</div>
 				</div>
-				<div className="sub-container">
-					<img src="https://via.placeholder.com/25" />
-					<p>{this.exposureTime}</p>
-				</div>
-				<div className="sub-container">
-					<img src="https://via.placeholder.com/25" />
-					<p>7:10 am - 5:03 pm</p>
-				</div>
-				<div className="sub-container">
-					<img src="https://via.placeholder.com/25" />
-					<p>7:10 am - 5:03 pm</p>
-				</div>
-				<div className="sub-container">
-					<img src="https://via.placeholder.com/25" />
-					<p>7:10 am - 5:03 pm</p>
-				</div>
-			</div>
-		</Card>
+			</Card>
+		</div>
 	);
 
   	render = () => this.element;

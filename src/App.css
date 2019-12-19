@@ -10,23 +10,22 @@ body,
     background-color: white;
     /* margin: 10%; */
 }
+html, body {
+	height: 100%;
+	margin: 0;
+}
 
-.container {
-	/* background-color: tomato;
+.card {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	font-size: calc(10px + 2vmin);
-	color: white; */
-
 	background-color: orangered;
     padding: 10px;
     border-radius: 5px;
-	min-width: 100%;
-	min-height: 100%;
-	color: white;
+	/* height: 100%; */
 	text-align: center;
 }
 
