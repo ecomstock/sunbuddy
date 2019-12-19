@@ -12,24 +12,23 @@ class App extends Component {
 	getNav = () => navigator.geolocation.getCurrentPosition(this.getLatLon);
 
 	getLatLon = position => {
-		const latitude  = position.coords.latitude;
-		const longitude = position.coords.longitude;
-		const latlon = [latitude, longitude];
-		// const latlon = [23, -110];
-		this.getWeatherData(latlon);
-		this.getSunData(latlon);
+		const coords = {};
+		coords.latitude  = position.coords.latitude;
+		coords.longitude = position.coords.longitude;
+		this.getWeatherData(coords);
 	}
 	
-	getWeatherData = latlon => {
-		console.log(latlon);
-		const lat = latlon[0];
-		const lon = latlon[1];
+	getWeatherData = coords => {
+		// console.log(coords);
+		const lat = coords.latitude;
+		const lon = coords.longitude;
 		const url = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/c9390ab45282a0eb042232d180560a3d/${lat},${lon}`;
 		fetch(url)
 			.then(res => res.json())
 			.then(
 				(result) => {
-					this.distributeWeatherData(result);
+					// console.log(result);
+					this.getHourlyData(coords, result);
 				// this.setState({
 				// 	isLoaded: true,
 				// 	items: result.items
@@ -47,28 +46,34 @@ class App extends Component {
 			)
 	}
 
-	getSunData = (latlon) => {
+	getSunData = (coords) => {
 		const SunCalc = require("suncalc");
-		const data = {};
-		const lat = latlon[0];
-		const lon = latlon[1];
+		const lat = coords.latitude;
+		const lon = coords.longitude;
 		const today = new Date();
+		const todayData = SunCalc.getTimes(today, lat, lon);
 		const tomorrow = new Date(today);
 		tomorrow.setDate(tomorrow.getDate() + 1);
-		const todaySunData = SunCalc.getTimes(today, lat, lon);
-		const tomorrowSunData = SunCalc.getTimes(tomorrow, lat, lon);
-		data.todaySunData = todaySunData;
-		data.tomorrowSunData = tomorrowSunData;
-		this.distributeSunData(data);
+		const tomorrowData = SunCalc.getTimes(tomorrow, lat, lon);
+		const dusk = todayData.dusk;
+		const sunData = {};
+		if (today < dusk) {
+			sunData.day = today;
+			sunData.dawn = todayData.dawn;
+			sunData.dusk = todayData.dusk;
+		} else {
+			sunData.day = tomorrow;
+			sunData.dawn = tomorrowData.dawn;
+			sunData.dusk = tomorrowData.dusk;
+		}
+		return sunData;
 	}
 
-	distributeSunData = data => {
-		const currently = new Date(); 
-		if (currently > data.todaySunData.dusk) {
-			console.log(data.tomorrowSunData);
-		} else {
-			console.log(data.todaySunData);
-		}
+	getHourlyData = (coords, data) => {
+		console.log(data);
+		const sunData = this.getSunData(coords);
+		const hourly = data.hourly.data;
+		this.filterHourlyData(hourly, sunData);
 	}
 
 	sortByDay = data => {
@@ -80,8 +85,13 @@ class App extends Component {
 			.filter(dataPoint => new Date(dataPoint.time * 1000).getDay() === tomorrow);
 	}
 
-	distributeWeatherData = data => {
-		this.getExposureHours(data);
+	filterHourlyData = (hourly, sunData) => {
+		const day = sunData.day.getDay();
+		console.log(day);
+		const hour = hourly[0].time * 1000;
+		const hours = hourly
+			.filter(hour => new Date(hour.time * 1000).getDay() === day);
+		console.log(hours);
 	}
 
 	getExposureHours = data => {
@@ -94,15 +104,8 @@ class App extends Component {
 			// 	returnObj.time = new Date(dataPoint.time * 1000).toLocaleTimeString();
 			// 	return returnObj;
 			// });
-		console.log(exposureHours);
-		//return `${criticalUV[0].time} - ${criticalUV[criticalUV.length-1].time}`;
 	}
 
-	
-
-	// getPrecipHours = data => {
-
-	// }
 
 	exposureTime = "Blah";
 
