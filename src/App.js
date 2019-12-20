@@ -58,14 +58,17 @@ class App extends Component {
 		const dusk = todayData.dusk;
 		const sunData = {};
 		if (today < dusk) {
-			sunData.day = today;
+			sunData.day = "today";
+			sunData.date = today;
 			sunData.dawn = todayData.dawn;
 			sunData.dusk = todayData.dusk;
 		} else {
-			sunData.day = tomorrow;
+			sunData.day = "tomorrow";
+			sunData.date = tomorrow;
 			sunData.dawn = tomorrowData.dawn;
 			sunData.dusk = tomorrowData.dusk;
 		}
+		console.log(sunData);
 		return sunData;
 	}
 
@@ -73,25 +76,17 @@ class App extends Component {
 		console.log(data);
 		const sunData = this.getSunData(coords);
 		const hourly = data.hourly.data;
-		this.filterHourlyData(hourly, sunData);
+		this.getDisplayHours(hourly, sunData);
 	}
 
-	sortByDay = data => {
-		const today = new Date().getDay();
-		const tomorrow = (new Date().getDay() + 1);
-		const todayData = data
-			.filter(dataPoint => new Date(dataPoint.time * 1000).getDay() === tomorrow);
-		const tomorrowData = data
-			.filter(dataPoint => new Date(dataPoint.time * 1000).getDay() === tomorrow);
-	}
-
-	filterHourlyData = (hourly, sunData) => {
-		const day = sunData.day.getDay();
-		console.log(day);
-		const hour = hourly[0].time * 1000;
+	getDisplayHours = (hourly, sunData) => {
+		const date = sunData.date.getDay();
 		const hours = hourly
-			.filter(hour => new Date(hour.time * 1000).getDay() === day);
+			.filter(hour => new Date(hour.time * 1000).getDay() === date);
 		console.log(hours);
+		//this.getExposureHours();
+		//this.getPrecipHours();
+		//this.getWorkoutHours();
 	}
 
 	getExposureHours = data => {
