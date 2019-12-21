@@ -4,6 +4,10 @@ import Card from '@material-ui/core/Card';
 
 class App extends Component {
 
+	conditions = {
+		uv : "hour.uvIndex >= 1"
+	}
+
 	componentDidMount () {
 		this.getNav();
 		console.log("ready");
@@ -76,31 +80,58 @@ class App extends Component {
 		console.log(data);
 		const sunData = this.getSunData(coords);
 		const hourly = data.hourly.data;
-		this.getDisplayHours(hourly, sunData);
+		this.filterHoursByDay(hourly, sunData);
 	}
 
-	getDisplayHours = (hourly, sunData) => {
+	filterHoursByDay = (hourly, sunData) => {
 		const date = sunData.date.getDay();
 		const hours = hourly
 			.filter(hour => new Date(hour.time * 1000).getDay() === date);
 		console.log(hours);
-		//this.getExposureHours();
-		//this.getPrecipHours();
-		//this.getWorkoutHours();
+		this.simplifyHourlyData(hours, sunData);
 	}
 
-	getExposureHours = data => {
-		const hourly = data.hourly.data;
-		const exposureHours = hourly
-			.filter(dataPoint => dataPoint.uvIndex >= 1);
-			
-			// .map(dataPoint => {
-			// 	const returnObj = {};
-			// 	returnObj.time = new Date(dataPoint.time * 1000).toLocaleTimeString();
-			// 	return returnObj;
-			// });
+	simplifyHourlyData = (hourly, sunData) => {
+		const simplified = hourly
+			.map(hour => ({...hour, time: new Date(hour.time * 1000).toLocaleTimeString([], {timeStyle: 'short'})}));
+		console.log(simplified);
+		this.displaySunData(sunData, null);
+		this.filterForCondition(simplified, this.conditions.uv);
+		//this.displayConditions(simplified, sunData, element, [uvData]);
 	}
 
+	displaySunData = (sunData, element) => {
+		console.log(sunData.day);
+	}
+
+	filterForCondition = (data, condition) => { // ...conditions = uv >= 1
+		const filtered = data
+			.filter(hour => (eval(condition)));
+		console.log(filtered);
+		this.checkAllDay(data, filtered, "uv");
+	}
+
+	checkAllDay = (unfiltered, filtered, condition) => {
+		console.log(unfiltered);
+		if (filtered.length === unfiltered.length) {
+			console.log("all day");
+			// this.displayAllDay();
+		} else {
+			console.log("made it");
+			this.checkUntil(unfiltered, filtered, condition);
+		}
+	}
+
+	checkUntil = (unfiltered, filtered, condition) => {
+		console.log("unfiltered" + unfiltered);
+		// const endOfDay = unfiltered[unfiltered.length-1].time;
+		// console.log(endOfDay);
+		//const startOfCondition = filtered[0].time;
+		//const endOfCondition = filtered[filtered.length].time;
+		// if () {
+
+		// }
+	}
 
 	exposureTime = "Blah";
 
