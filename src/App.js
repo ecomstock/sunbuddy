@@ -5,7 +5,10 @@ import Card from '@material-ui/core/Card';
 class App extends Component {
 
 	conditions = {
-		uv : "hour.uvIndex >= 1"
+		uv     : "hour.uvIndex >= 0", 
+		precip : "hour.precipIntensity >= 0.015 && hour.precipProbability < 1",
+		temp   : "hour.apparentTemperature < 70 && hour.apparentTemperature > 32"
+		//precip : "hour.precipIntensity >= 0.015 && hour.precipProbability >= 0.20"
 	}
 
 	componentDidMount () {
@@ -31,7 +34,7 @@ class App extends Component {
 			.then(res => res.json())
 			.then(
 				(result) => {
-					// console.log(result);
+					//console.log(result);
 					this.getHourlyData(coords, result);
 				// this.setState({
 				// 	isLoaded: true,
@@ -72,8 +75,12 @@ class App extends Component {
 			sunData.dawn = tomorrowData.dawn;
 			sunData.dusk = tomorrowData.dusk;
 		}
-		console.log(sunData);
+		this.displaySunData(sunData, null);
 		return sunData;
+	}
+
+	displaySunData = (sunData, element) => {
+		// console.log(sunData);
 	}
 
 	getHourlyData = (coords, data) => {
@@ -86,83 +93,83 @@ class App extends Component {
 		const date = sunData.date.getDay();
 		const hours = hourly
 			.filter(hour => new Date(hour.time * 1000).getDay() === date);
-		this.simplifyHourlyData(hours, sunData);
+		this.getReadableTime(hours, sunData);
 	}
 
-	simplifyHourlyData = (hourly, sunData) => {
-		const simplified = hourly
-			.map(hour => ({...hour, time: new Date(hour.time * 1000).toLocaleTimeString([], {timeStyle: "short"})}));
-		console.log(simplified);
-		this.displaySunData(sunData, null);
-		this.filterForCondition(simplified, this.conditions.uv);
-		//this.displayConditions(simplified, sunData, element, [uvData]);
+	getReadableTime = hourly => {
+		const readable = hourly
+			.map(hour => ({...hour, time: new Date(hour.time * 1000).getHours()}));
+		console.log(readable);
+		this.filterForCondition(readable, this.conditions.temp);
 	}
 
-	displaySunData = (sunData, element) => {
-		console.log(sunData.day);
-	}
-
-	filterForCondition = (data, condition) => { // ...conditions = uv >= 1
+	filterForCondition = (data, condition) => {
 		const filtered = data
 			.filter(hour => (eval(condition)));
-		console.log(filtered);
-		this.checkAllDay(data, filtered, "uv");
+		// console.log(filtered);
+		this.checkAllDay(data, filtered);
 	}
 
-	checkAllDay = (unfiltered, filtered, condition) => {
-		console.log(unfiltered);
+	checkAllDay = (unfiltered, filtered) => {
 		if (filtered.length === unfiltered.length) {
 			console.log("all day");
 			// this.displayAllDay();
+			this.getFilteredTimes(filtered); // don't forget to take this out
 		} else {
-			this.sortTimes(filtered);
+			this.getFilteredTimes(filtered);
 		}
 	}
 
-	checkUntil = (unfiltered, filtered) => {
-		const endOfDay = unfiltered[unfiltered.length-1].time;
-		console.log(endOfDay);
-		const startOfCondition = filtered[0].time;
-		console.log(startOfCondition);
-		const endOfCondition = filtered[filtered.length-1].time;
-		console.log(endOfCondition);
-		const current = unfiltered[0].time;
-		console.log(current);
-		if (current === startOfCondition) {
-			// display "until"
-			// this.findUntilTime();
-		} else {
-
-		}
+	getFilteredTimes = data => {
+		const times = data
+			.map(hour => hour.time);
+		this.sortTimes(times);
 	}
+
+	// checkUntil = (unfiltered, filtered) => {
+	// 	const endOfDay = unfiltered[unfiltered.length-1].time;
+	// 	console.log(endOfDay);
+	// 	const startOfCondition = filtered[0].time;
+	// 	console.log(startOfCondition);
+	// 	const endOfCondition = filtered[filtered.length-1].time;
+	// 	console.log(endOfCondition);
+	// 	const current = unfiltered[0].time;
+	// 	console.log(current);
+	// 	if (current === startOfCondition) {
+	// 		// display "until"
+	// 		// this.findUntilTime();
+	// 	} else {
+
+	// 	}
+	// }
 
 	sortTimes = (filtered) => {
 		console.log(filtered);
-		var start = filtered[0];
-		var stop = start;
-		var arrLength = filtered.length;
-		var result = '';
+		let earliest = filtered[0];
+		let latest = earliest;
+		let length = filtered.length;
+		let result = "";
 		
-		for (var i = 1; i < arrLength; i++) {   	
+		for (let i = 1; i < length; i++) {   	
 			
-			if (filtered[i] === stop + 1) {
-				stop = filtered[i];
+			if (filtered[i] === latest + 1) {
+				latest = filtered[i];
 			} else {
-				if (start === stop) {
-				result += start + ', ';            
+				if (earliest === latest) {
+				result += earliest + ', ';            
 				} else {
-					result += start + '-' + stop + ', ';
+					result += earliest + '-' + latest + ', ';
 				}
-				// reset the start and stop pointers
-				start = filtered[i];
-				stop = start;
+				// reset the earliest and latest pointers
+				earliest = filtered[i];
+				latest = earliest;
 			}
 		}
 
-		if (start === stop) {
-			result += start;            
+		if (earliest === latest) {
+			result += earliest;            
 		} else {
-			result += start + '-' + stop;
+			result += earliest + '-' + latest;
 		}
 		console.log("works!")
 		console.log(result);
