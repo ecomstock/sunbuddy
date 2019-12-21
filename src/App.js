@@ -77,7 +77,6 @@ class App extends Component {
 	}
 
 	getHourlyData = (coords, data) => {
-		console.log(data);
 		const sunData = this.getSunData(coords);
 		const hourly = data.hourly.data;
 		this.filterHoursByDay(hourly, sunData);
@@ -87,13 +86,12 @@ class App extends Component {
 		const date = sunData.date.getDay();
 		const hours = hourly
 			.filter(hour => new Date(hour.time * 1000).getDay() === date);
-		console.log(hours);
 		this.simplifyHourlyData(hours, sunData);
 	}
 
 	simplifyHourlyData = (hourly, sunData) => {
 		const simplified = hourly
-			.map(hour => ({...hour, time: new Date(hour.time * 1000).toLocaleTimeString([], {timeStyle: 'short'})}));
+			.map(hour => ({...hour, time: new Date(hour.time * 1000).toLocaleTimeString([], {timeStyle: "short"})}));
 		console.log(simplified);
 		this.displaySunData(sunData, null);
 		this.filterForCondition(simplified, this.conditions.uv);
@@ -117,19 +115,57 @@ class App extends Component {
 			console.log("all day");
 			// this.displayAllDay();
 		} else {
-			console.log("made it");
-			this.checkUntil(unfiltered, filtered);
+			this.sortTimes(filtered);
 		}
 	}
 
 	checkUntil = (unfiltered, filtered) => {
 		const endOfDay = unfiltered[unfiltered.length-1].time;
 		console.log(endOfDay);
-		//const startOfCondition = filtered[0].time;
-		//const endOfCondition = filtered[filtered.length].time;
-		// if () {
+		const startOfCondition = filtered[0].time;
+		console.log(startOfCondition);
+		const endOfCondition = filtered[filtered.length-1].time;
+		console.log(endOfCondition);
+		const current = unfiltered[0].time;
+		console.log(current);
+		if (current === startOfCondition) {
+			// display "until"
+			// this.findUntilTime();
+		} else {
 
-		// }
+		}
+	}
+
+	sortTimes = (filtered) => {
+		console.log(filtered);
+		var start = filtered[0];
+		var stop = start;
+		var arrLength = filtered.length;
+		var result = '';
+		
+		for (var i = 1; i < arrLength; i++) {   	
+			
+			if (filtered[i] === stop + 1) {
+				stop = filtered[i];
+			} else {
+				if (start === stop) {
+				result += start + ', ';            
+				} else {
+					result += start + '-' + stop + ', ';
+				}
+				// reset the start and stop pointers
+				start = filtered[i];
+				stop = start;
+			}
+		}
+
+		if (start === stop) {
+			result += start;            
+		} else {
+			result += start + '-' + stop;
+		}
+		console.log("works!")
+		console.log(result);
 	}
 
 	exposureTime = "Blah";
