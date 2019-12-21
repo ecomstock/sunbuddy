@@ -118,14 +118,13 @@ class App extends Component {
 			// this.displayAllDay();
 		} else {
 			console.log("made it");
-			this.checkUntil(unfiltered, filtered, condition);
+			this.checkUntil(unfiltered, filtered);
 		}
 	}
 
-	checkUntil = (unfiltered, filtered, condition) => {
-		console.log("unfiltered" + unfiltered);
-		// const endOfDay = unfiltered[unfiltered.length-1].time;
-		// console.log(endOfDay);
+	checkUntil = (unfiltered, filtered) => {
+		const endOfDay = unfiltered[unfiltered.length-1].time;
+		console.log(endOfDay);
 		//const startOfCondition = filtered[0].time;
 		//const endOfCondition = filtered[filtered.length].time;
 		// if () {
