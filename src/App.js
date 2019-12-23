@@ -143,36 +143,41 @@ class App extends Component {
 	// 	}
 	// }
 
-	sortTimes = (filtered) => {
-		console.log(filtered);
-		let earliest = filtered[0];
-		let latest = earliest;
-		let length = filtered.length;
+	sortTimes = (times) => {
+		console.log(times);
+		const now = new Date().getHours();
+		let earliest = times[0];
+		let latest = earliest; // assume singleton
+		let length = times.length;
 		let result = "";
 		
-		for (let i = 1; i < length; i++) {   	
+		for (let i = 1; i < length; i++) { // start loop at 2nd time, end at penultimate
 			
-			if (filtered[i] === latest + 1) {
-				latest = filtered[i];
+			if (times[i] === latest + 1) { // if next time is one more than "latest",
+				latest = times[i]; // increment latest
 			} else {
-				if (earliest === latest) {
-				result += earliest + ', ';            
-				} else {
-					result += earliest + '-' + latest + ', ';
+				if (earliest === latest) { // must be a singleton
+				result += earliest + ', '; // print and break for singleton  
+				} else { // must be end of span
+					result += earliest + '-' + latest + ', '; // print and break for span
 				}
-				// reset the earliest and latest pointers
-				earliest = filtered[i];
+				// begin new group
+				earliest = times[i];
 				latest = earliest;
 			}
 		}
 
 		if (earliest === latest) {
-			result += earliest;            
+			result += earliest; // print final singleton            
 		} else {
-			result += earliest + '-' + latest;
+			result += earliest + '-' + latest; // print final span
 		}
+
 		console.log("works!")
 		console.log(result);
+		// if (earliest === now) {
+		// 	console.log(`Until ${times[times.length - 1] + 1}`);
+		// }
 	}
 
 	exposureTime = "Blah";
