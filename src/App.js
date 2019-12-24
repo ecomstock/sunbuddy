@@ -162,11 +162,15 @@ class App extends Component {
 	checkAllDay = (unfiltered, filtered, field) => {
 		if (filtered.length === unfiltered.length) {
 			console.log("all day");
-			// this.displayAllDay();
-			this.getFilteredTimes(filtered, field); // don't forget to take this out
+			this.displayAllDay(field);
+			//this.getFilteredTimes(filtered, field); // don't forget to take this out
 		} else {
 			this.getFilteredTimes(filtered, field);
 		}
+	}
+
+	displayAllDay = field => {
+		this.setState({[field]:"All day"});
 	}
 
 	getFilteredTimes = (data, field) => {
