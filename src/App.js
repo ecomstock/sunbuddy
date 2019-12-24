@@ -207,9 +207,9 @@ class App extends Component {
 						<p className="text-large">Portland</p>
 						<p>{this.state.day}</p>
 						<div id="temperature">
-							<p>{this.state.lowTemp}</p>
-							<p className="text-large">{this.state.currentTemp}</p>
-							<p>{this.state.highTemp}</p>
+							<p id="low-temp">{this.state.lowTemp}</p>
+							<p id="current-temp" className="text-large">{this.state.currentTemp}</p>
+							<p id="high-temp">{this.state.highTemp}</p>
 						</div>
 						<Condition 
 							iconName={mdiWhiteBalanceSunny}

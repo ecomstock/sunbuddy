@@ -44,5 +44,17 @@ html, body {
 	padding-right: 5px;
 }
 
+#current-temp {
+	margin: 0 10px
+}
+
+#low-temp {
+	color: blue;
+}
+
+#high-temp {
+	color: red;
+}
+
 
 
