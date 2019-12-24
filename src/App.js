@@ -4,8 +4,10 @@ import Card from '@material-ui/core/Card';
 
 class App extends Component {
 
+	state = {};
+
 	conditions = {
-		uv     : "hour.uvIndex >= 0", 
+		uv     : "hour.uvIndex >= 1", 
 		precip : "hour.precipIntensity >= 0.015 && hour.precipProbability < 1",
 		temp   : "hour.apparentTemperature < 70 && hour.apparentTemperature > 32"
 		//precip : "hour.precipIntensity >= 0.015 && hour.precipProbability >= 0.20"
@@ -26,20 +28,17 @@ class App extends Component {
 	}
 	
 	getWeatherData = coords => {
-		// console.log(coords);
-		const lat = coords.latitude;
-		const lon = coords.longitude;
+		// const lat = coords.latitude;
+		// const lon = coords.longitude;
+		const lat = 48;
+		const lon = -122; 
 		const url = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/c9390ab45282a0eb042232d180560a3d/${lat},${lon}`;
 		fetch(url)
 			.then(res => res.json())
 			.then(
 				(result) => {
-					//console.log(result);
+					console.log(result);
 					this.getHourlyData(coords, result);
-				// this.setState({
-				// 	isLoaded: true,
-				// 	items: result.items
-				// });
 				},
 				// Note: it's important to handle errors here
 				// instead of a catch() block so that we don't swallow
@@ -79,8 +78,9 @@ class App extends Component {
 		return sunData;
 	}
 
-	displaySunData = (sunData, element) => {
-		// console.log(sunData);
+	displaySunData = (sunData) => {
+		this.setState({day:sunData.day});
+		console.log(this.state);
 	}
 
 	getHourlyData = (coords, data) => {
@@ -100,50 +100,35 @@ class App extends Component {
 		const readable = hourly
 			.map(hour => ({...hour, time: new Date(hour.time * 1000).getHours()}));
 		console.log(readable);
-		this.filterForCondition(readable, this.conditions.temp);
+		this.filterForCondition(readable, this.conditions.uv, "exposureTime");
+		this.filterForCondition(readable, this.conditions.precip, "precipTime");
+		this.filterForCondition(readable, this.conditions.temp, "tempTime");
 	}
 
-	filterForCondition = (data, condition) => {
+	filterForCondition = (data, condition, field) => {
 		const filtered = data
 			.filter(hour => (eval(condition)));
 		// console.log(filtered);
-		this.checkAllDay(data, filtered);
+		this.checkAllDay(data, filtered, field);
 	}
 
-	checkAllDay = (unfiltered, filtered) => {
+	checkAllDay = (unfiltered, filtered, field) => {
 		if (filtered.length === unfiltered.length) {
 			console.log("all day");
 			// this.displayAllDay();
-			this.getFilteredTimes(filtered); // don't forget to take this out
+			this.getFilteredTimes(filtered, field); // don't forget to take this out
 		} else {
-			this.getFilteredTimes(filtered);
+			this.getFilteredTimes(filtered, field);
 		}
 	}
 
-	getFilteredTimes = data => {
+	getFilteredTimes = (data, field) => {
 		const times = data
 			.map(hour => hour.time);
-		this.sortTimes(times);
+		this.sortTimes(times, field);
 	}
 
-	// checkUntil = (unfiltered, filtered) => {
-	// 	const endOfDay = unfiltered[unfiltered.length-1].time;
-	// 	console.log(endOfDay);
-	// 	const startOfCondition = filtered[0].time;
-	// 	console.log(startOfCondition);
-	// 	const endOfCondition = filtered[filtered.length-1].time;
-	// 	console.log(endOfCondition);
-	// 	const current = unfiltered[0].time;
-	// 	console.log(current);
-	// 	if (current === startOfCondition) {
-	// 		// display "until"
-	// 		// this.findUntilTime();
-	// 	} else {
-
-	// 	}
-	// }
-
-	sortTimes = (times) => {
+	sortTimes = (times, field) => {
 		console.log(times);
 		const now = new Date().getHours();
 		let earliest = times[0];
@@ -153,13 +138,16 @@ class App extends Component {
 		
 		for (let i = 1; i < length; i++) { // start loop at 2nd time, end at penultimate
 			
-			if (times[i] === latest + 1) { // if next time is one more than "latest",
+			if (times[i] === latest + 1) { // if next time is one greater than "latest",
 				latest = times[i]; // increment latest
 			} else {
 				if (earliest === latest) { // must be a singleton
-				result += earliest + ', '; // print and break for singleton  
+					let convertEarliest = this.convertTime(earliest);
+					result += convertEarliest + ', '; // print and break for singleton  
 				} else { // must be end of span
-					result += earliest + '-' + latest + ', '; // print and break for span
+					let convertEarliest = this.convertTime(earliest);
+					let convertLatest = this.convertTime(latest);
+					result += convertEarliest + '-' + convertLatest + ', '; // print and break for span
 				}
 				// begin new group
 				earliest = times[i];
@@ -168,55 +156,68 @@ class App extends Component {
 		}
 
 		if (earliest === latest) {
-			result += earliest; // print final singleton            
+			let convertEarliest = this.convertTime(earliest);
+			result += convertEarliest; // print final singleton            
 		} else {
-			result += earliest + '-' + latest; // print final span
+			let convertEarliest = this.convertTime(earliest);
+			let convertLatest = this.convertTime(latest);
+			result += convertEarliest + '-' + convertLatest; // print final span
 		}
+		//const stateObj = ;
 
 		console.log("works!")
 		console.log(result);
+		this.setState({[field]:result});
+		console.log(this.state);
 		// if (earliest === now) {
 		// 	console.log(`Until ${times[times.length - 1] + 1}`);
 		// }
 	}
 
+	convertTime = time => {
+		const amPm = time >= 12 ? "pm" : "am";
+		const converted = (time % 12) || 12;
+		const timeString = `${converted}:00 ${amPm}`;
+		return timeString;
+	}
+
 	exposureTime = "Blah";
 
-	element = (
-		<div className="container">
-			<Card className="card">
-				<div className="content">
-					<img src="https://via.placeholder.com/75" />
-					<p className="text-large">Portland</p>
-					<p>today</p>
-					<div className="sub-container">
-						<p>32</p>
-						<p className="text-large">40</p>
-						<p>42</p>
+	render() {
+		return(
+			<div className="container">
+				<Card className="card">
+					<div className="content">
+						<img src="https://via.placeholder.com/75" />
+						<p className="text-large">Portland</p>
+						<p>{this.state.day}</p>
+						<div className="sub-container">
+							<p>32</p>
+							<p className="text-large">40</p>
+							<p>42</p>
+						</div>
+						<div className="sub-container">
+							<img src="https://via.placeholder.com/25" />
+							<p>{this.state.sunTime}</p>
+						</div>
+						<div className="sub-container">
+							<img src="https://via.placeholder.com/25" />
+							<p>{this.state.exposureTime}</p>
+						</div>
+						<div className="sub-container">
+							<img src="https://via.placeholder.com/25" />
+							<p>{this.state.precipTime}</p>
+						</div>
+						<div className="sub-container">
+							<img src="https://via.placeholder.com/25" />
+							<p>{this.state.tempTime}</p>
+						</div>
 					</div>
-					<div className="sub-container">
-						<img src="https://via.placeholder.com/25" />
-						<p>{this.exposureTime}</p>
-					</div>
-					<div className="sub-container">
-						<img src="https://via.placeholder.com/25" />
-						<p>7:10 am - 5:03 pm</p>
-					</div>
-					<div className="sub-container">
-						<img src="https://via.placeholder.com/25" />
-						<p>7:10 am - 5:03 pm</p>
-					</div>
-					<div className="sub-container">
-						<img src="https://via.placeholder.com/25" />
-						<p>7:10 am - 5:03 pm</p>
-					</div>
-				</div>
-			</Card>
-		</div>
-	);
-
-  	render = () => this.element;
-
+				</Card>
+			</div>
+		);
+	}
+	
 }
 
 export default App;
