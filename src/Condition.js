@@ -5,7 +5,8 @@ const Condition = props => {
     if (props.conditionTime) {
         return (
             <div className="condition" >
-                <Icon path={props.iconName}
+                <Icon className="icon"
+                    path={props.iconName}
                     title={props.iconTitle}
                     size={props.iconSize}
                     color={props.iconColor}
