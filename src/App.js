@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Condition from './Condition';
 import './App.css';
 import Icon from '@mdi/react'
 import { 
@@ -203,38 +204,34 @@ class App extends Component {
 							<p className="text-large">40</p>
 							<p>42</p>
 						</div>
-						<div className="sub-container">
-							<Icon path={mdiWhiteBalanceSunny}
-								title="white-balance-sunny"
-								size={1}
-								color="red"
-							/>
-							<p>{this.state.sunTime}</p>
-						</div>
-						<div className="sub-container">
-							<Icon path={mdiWeatherSunnyAlert}
-								title="User Profile"
-								size={1}
-								color="red"
-							/>
-							<p>{this.state.exposureTime}</p>
-						</div>
-						<div className="sub-container">
-							<Icon path={mdiUmbrella}
-								title="User Profile"
-								size={1}
-								color="red"
-							/>
-							<p>{this.state.precipTime}</p>
-						</div>
-						<div className="sub-container">
-							<Icon path={mdiRunFast}
-								title="User Profile"
-								size={1}
-								color="red"
-							/>
-							<p>{this.state.tempTime}</p>
-						</div>
+						<Condition 
+							iconName={mdiWhiteBalanceSunny}
+							iconTitle={"sunlight"}
+							iconSize={1}
+							iconColor={"black"}
+							conditionTime={this.state.sunTime}
+						/>
+						<Condition 
+							iconName={mdiWeatherSunnyAlert}
+							iconTitle={"high-uv"}
+							iconSize={1}
+							iconColor={"black"}
+							conditionTime={this.state.exposureTime}
+						/>
+						<Condition 
+							iconName={mdiUmbrella}
+							iconTitle={"precipitation"}
+							iconSize={1}
+							iconColor={"black"}
+							conditionTime={this.state.precipTime}
+						/>
+						<Condition 
+							iconName={mdiRunFast}
+							iconTitle={"workout"}
+							iconSize={1}
+							iconColor={"black"}
+							conditionTime={this.state.tempTime}
+						/>
 					</div>
 				</Card>
 			</div>
