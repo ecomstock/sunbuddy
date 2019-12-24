@@ -29,7 +29,7 @@ html, body {
 	text-align: center;
 }
 
-.condition {
+.condition, #temperature {
 	display: flex;
 	align-items: center;
 	justify-content: center;
