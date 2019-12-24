@@ -5,7 +5,6 @@ import {
 	mdiWhiteBalanceSunny,
 	mdiUmbrella,
 	mdiRunFast,
-	mdiWeatherSunnyAlert,
 	mdiSunglasses
 } from '@mdi/js'
 import Card from '@material-ui/core/Card';
@@ -31,18 +30,38 @@ class App extends Component {
 		coords.latitude  = position.coords.latitude;
 		coords.longitude = position.coords.longitude;
 		this.getWeatherData(coords);
-		//this.getCity(coords);
+		this.getCity(coords);
 	}
 
-	// getCity = coords => {
-
-	// }
+	getCity = coords => {
+		const lat = coords.latitude;
+		const lon = coords.longitude; 
+		// const lat = 1.35;
+		// const lon = 103.82;
+		const url = `https://geocodeapi.p.rapidapi.com/GetLargestCities?latitude=${lat}&longitude=${lon}&range=50000`
+		fetch(url, {
+			"method": "GET",
+			"headers": {
+				"x-rapidapi-host": "geocodeapi.p.rapidapi.com",
+				"x-rapidapi-key": "G0GBgJ6WYSmshKfgZydJ6iBoKrThp11fTNTjsnljvjz33JtipZ"
+			}
+		})
+		.then(response => response.json())
+		.then(result => {
+			console.log(result);
+			const city = result[0].City;
+			this.setState({city:city});
+		})
+		// .catch(err => {
+		// 	console.log(err);
+		// });
+	}
 	
 	getWeatherData = coords => {
-		// const lat = coords.latitude;
-		// const lon = coords.longitude;
-		const lat = 48;
-		const lon = -122; 
+		const lat = coords.latitude;
+		const lon = coords.longitude;
+		// const lat = 1.35;
+		// const lon = 103.82;
 		const url = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/c9390ab45282a0eb042232d180560a3d/${lat},${lon}`;
 		fetch(url)
 			.then(res => res.json())
@@ -210,7 +229,7 @@ class App extends Component {
 				<Card className="card">
 					<div className="content">
 						<img src="https://via.placeholder.com/75" />
-						<p className="text-large">Portland</p>
+						<p className="text-large">{this.state.city}</p>
 						<p>{this.state.day}</p>
 						<div id="temperature">
 							<p id="low-temp">{this.state.lowTemp}</p>
