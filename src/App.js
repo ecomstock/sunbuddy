@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
 import './App.css';
+import Icon from '@mdi/react'
+import { 
+	mdiWhiteBalanceSunny,
+	mdiUmbrella,
+	mdiRunFast,
+	mdiWeatherSunnyAlert
+} from '@mdi/js'
 import Card from '@material-ui/core/Card';
 
 class App extends Component {
@@ -197,19 +204,35 @@ class App extends Component {
 							<p>42</p>
 						</div>
 						<div className="sub-container">
-							<img src="https://via.placeholder.com/25" />
+							<Icon path={mdiWhiteBalanceSunny}
+								title="white-balance-sunny"
+								size={1}
+								color="red"
+							/>
 							<p>{this.state.sunTime}</p>
 						</div>
 						<div className="sub-container">
-							<img src="https://via.placeholder.com/25" />
+							<Icon path={mdiWeatherSunnyAlert}
+								title="User Profile"
+								size={1}
+								color="red"
+							/>
 							<p>{this.state.exposureTime}</p>
 						</div>
 						<div className="sub-container">
-							<img src="https://via.placeholder.com/25" />
+							<Icon path={mdiUmbrella}
+								title="User Profile"
+								size={1}
+								color="red"
+							/>
 							<p>{this.state.precipTime}</p>
 						</div>
 						<div className="sub-container">
-							<img src="https://via.placeholder.com/25" />
+							<Icon path={mdiRunFast}
+								title="User Profile"
+								size={1}
+								color="red"
+							/>
 							<p>{this.state.tempTime}</p>
 						</div>
 					</div>
