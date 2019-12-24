@@ -178,23 +178,37 @@ class App extends Component {
 	sortTimes = (times, field) => {
 		if (times.length === 0) return;
 		const now = new Date().getHours();
+		const endOfCurrentHour = now + 1;
 		let earliest = times[0];
 		let latest = earliest; // assume singleton
 		let length = times.length;
 		let result = "";
+		let convertEarliest = "";
 		
 		for (let i = 1; i < length; i++) { // start loop at 2nd time, end at penultimate
 			
 			if (times[i] === latest + 1) { // if next time is one greater than "latest",
 				latest = times[i]; // increment latest
 			} else {
+				
 				if (earliest === latest) { // must be a singleton
-					let convertEarliest = this.convertTime(earliest);
+					if (earliest === now) {
+						let convertEndOfCurrentHour = this.convertTime(endOfCurrentHour);
+						convertEarliest = `Until ${convertEndOfCurrentHour}`;
+					} else {
+						convertEarliest = this.convertTime(earliest);
+					}
 					result += convertEarliest + ', '; // print and break for singleton  
 				} else { // must be end of span
-					let convertEarliest = this.convertTime(earliest);
+					if (earliest === now) {
+						convertEarliest = `Until `;
+					} else {
+						convertEarliest = `${this.convertTime(earliest)}-`
+					}
+					console.log(`earliest: ${convertEarliest}`);
+					//let convertEarliest = ;
 					let convertLatest = this.convertTime(latest);
-					result += convertEarliest + '-' + convertLatest + ', '; // print and break for span
+					result += convertEarliest + convertLatest + ', '; // print and break for span
 				}
 				// begin new group
 				earliest = times[i];
@@ -206,9 +220,15 @@ class App extends Component {
 			let convertEarliest = this.convertTime(earliest);
 			result += convertEarliest; // print final singleton            
 		} else {
-			let convertEarliest = this.convertTime(earliest);
+			if (earliest === now) {
+				convertEarliest = `Until `;
+			} else {
+				convertEarliest = `${this.convertTime(earliest)}-`
+			}
+			console.log(`earliest: ${convertEarliest}`);
+			//let convertEarliest = ;
 			let convertLatest = this.convertTime(latest);
-			result += convertEarliest + '-' + convertLatest; // print final span
+			result += convertEarliest + convertLatest; // print final span
 		}
 		this.setState({[field]:result});
 		// if (earliest === now) {
