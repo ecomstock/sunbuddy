@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Condition from './Condition';
 import './App.css';
-import Icon from '@mdi/react'
 import { 
 	mdiWhiteBalanceSunny,
 	mdiUmbrella,
@@ -16,14 +15,12 @@ class App extends Component {
 
 	conditions = {
 		uv     : "hour.uvIndex >= 1", 
-		precip : "hour.precipIntensity >= 0.015 && hour.precipProbability < 1",
-		temp   : "hour.apparentTemperature < 70 && hour.apparentTemperature > 32"
-		//precip : "hour.precipIntensity >= 0.015 && hour.precipProbability >= 0.20"
+		temp   : "hour.apparentTemperature < 70 && hour.apparentTemperature > 32",
+		precip : "hour.precipIntensity >= 0.015 && hour.precipProbability >= 0.20"
 	}
 
 	componentDidMount () {
 		this.getNav();
-		console.log("ready");
 	}
 
 	getNav = () => navigator.geolocation.getCurrentPosition(this.getLatLon);
@@ -46,7 +43,7 @@ class App extends Component {
 			.then(
 				(result) => {
 					console.log(result);
-					this.getHourlyData(coords, result);
+					this.exportData(coords, result);
 				},
 				// Note: it's important to handle errors here
 				// instead of a catch() block so that we don't swallow
@@ -61,14 +58,14 @@ class App extends Component {
 	}
 
 	getSunData = (coords) => {
-		const SunCalc = require("suncalc");
+		const sunCalc = require("suncalc");
 		const lat = coords.latitude;
 		const lon = coords.longitude;
 		const today = new Date();
-		const todayData = SunCalc.getTimes(today, lat, lon);
+		const todayData = sunCalc.getTimes(today, lat, lon);
 		const tomorrow = new Date(today);
 		tomorrow.setDate(tomorrow.getDate() + 1);
-		const tomorrowData = SunCalc.getTimes(tomorrow, lat, lon);
+		const tomorrowData = sunCalc.getTimes(tomorrow, lat, lon);
 		const dusk = todayData.dusk;
 		const sunData = {};
 		if (today < dusk) {
@@ -86,15 +83,32 @@ class App extends Component {
 		return sunData;
 	}
 
-	displaySunData = (sunData) => {
-		this.setState({day:sunData.day});
-		console.log(this.state);
+	displaySunData = sunData => {
+		const dawn = new Date(sunData.dawn).toLocaleTimeString();
+		const dusk = new Date(sunData.dusk).toLocaleTimeString();
+		this.setState({
+			day:sunData.day,
+			sunTime:`${dawn}-${dusk}`
+		});
 	}
 
-	getHourlyData = (coords, data) => {
+	exportData = (coords, data) => {
 		const sunData = this.getSunData(coords);
+		const current = data.currently;
+		const today = data.daily.data[0];
 		const hourly = data.hourly.data;
+		this.displayCurrent(current);
+		this.displayToday(today);
 		this.filterHoursByDay(hourly, sunData);
+	}
+
+	displayCurrent = current => this.setState({currentTemp:Math.round(current.temperature)});
+
+	displayToday = today => {
+		this.setState({
+			lowTemp:Math.round(today.temperatureLow),
+			highTemp:Math.round(today.temperatureHigh)
+		});
 	}
 
 	filterHoursByDay = (hourly, sunData) => {
@@ -137,7 +151,7 @@ class App extends Component {
 	}
 
 	sortTimes = (times, field) => {
-		console.log(times);
+		if (times.length === 0) return;
 		const now = new Date().getHours();
 		let earliest = times[0];
 		let latest = earliest; // assume singleton
@@ -171,25 +185,18 @@ class App extends Component {
 			let convertLatest = this.convertTime(latest);
 			result += convertEarliest + '-' + convertLatest; // print final span
 		}
-		//const stateObj = ;
-
-		console.log("works!")
-		console.log(result);
 		this.setState({[field]:result});
-		console.log(this.state);
 		// if (earliest === now) {
 		// 	console.log(`Until ${times[times.length - 1] + 1}`);
 		// }
 	}
 
 	convertTime = time => {
-		const amPm = time >= 12 ? "pm" : "am";
+		const amPm = time >= 12 ? "PM" : "AM";
 		const converted = (time % 12) || 12;
 		const timeString = `${converted}:00 ${amPm}`;
 		return timeString;
 	}
-
-	exposureTime = "Blah";
 
 	render() {
 		return(
@@ -199,10 +206,10 @@ class App extends Component {
 						<img src="https://via.placeholder.com/75" />
 						<p className="text-large">Portland</p>
 						<p>{this.state.day}</p>
-						<div className="sub-container">
-							<p>32</p>
-							<p className="text-large">40</p>
-							<p>42</p>
+						<div id="temperature">
+							<p>{this.state.lowTemp}</p>
+							<p className="text-large">{this.state.currentTemp}</p>
+							<p>{this.state.highTemp}</p>
 						</div>
 						<Condition 
 							iconName={mdiWhiteBalanceSunny}
