@@ -5,7 +5,8 @@ import {
 	mdiWhiteBalanceSunny,
 	mdiUmbrella,
 	mdiRunFast,
-	mdiWeatherSunnyAlert
+	mdiWeatherSunnyAlert,
+	mdiSunglasses
 } from '@mdi/js'
 import Card from '@material-ui/core/Card';
 
@@ -219,7 +220,7 @@ class App extends Component {
 							conditionTime={this.state.sunTime}
 						/>
 						<Condition 
-							iconName={mdiWeatherSunnyAlert}
+							iconName={mdiSunglasses}
 							iconTitle={"high-uv"}
 							iconSize={1}
 							iconColor={"black"}
