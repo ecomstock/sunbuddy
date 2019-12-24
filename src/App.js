@@ -31,7 +31,12 @@ class App extends Component {
 		coords.latitude  = position.coords.latitude;
 		coords.longitude = position.coords.longitude;
 		this.getWeatherData(coords);
+		//this.getCity(coords);
 	}
+
+	// getCity = coords => {
+
+	// }
 	
 	getWeatherData = coords => {
 		// const lat = coords.latitude;
@@ -85,8 +90,8 @@ class App extends Component {
 	}
 
 	displaySunData = sunData => {
-		const dawn = new Date(sunData.dawn).toLocaleTimeString();
-		const dusk = new Date(sunData.dusk).toLocaleTimeString();
+		const dawn = new Date(sunData.dawn).toLocaleTimeString([], {timeStyle: "short"});
+		const dusk = new Date(sunData.dusk).toLocaleTimeString([], {timeStyle: "short"});
 		this.setState({
 			day:sunData.day,
 			sunTime:`${dawn}-${dusk}`
