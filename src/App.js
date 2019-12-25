@@ -14,7 +14,7 @@ class App extends Component {
 	state = {};
 
 	conditions = {
-		uv     : "hour.uvIndex >= 1", 
+		uv     : "hour.uvIndex >= 4", 
 		temp   : "hour.apparentTemperature < 70 && hour.apparentTemperature > 32",
 		precip : "hour.precipIntensity >= 0.015 && hour.precipProbability >= 0.20"
 	}
@@ -36,8 +36,8 @@ class App extends Component {
 	getCity = coords => {
 		const lat = coords.latitude;
 		const lon = coords.longitude; 
-		// const lat = 1.35;
-		// const lon = 103.82;
+		// const lat = 34;
+		// const lon = -118;
 		const url = `https://geocodeapi.p.rapidapi.com/GetLargestCities?latitude=${lat}&longitude=${lon}&range=50000`
 		fetch(url, {
 			"method": "GET",
@@ -58,10 +58,10 @@ class App extends Component {
 	}
 	
 	getWeatherData = coords => {
-		const lat = coords.latitude;
-		const lon = coords.longitude;
-		// const lat = 1.35;
-		// const lon = 103.82;
+		//const lat = coords.latitude;
+		//const lon = coords.longitude;
+		const lat = 34;
+		const lon = -118;
 		const url = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/c9390ab45282a0eb042232d180560a3d/${lat},${lon}`;
 		fetch(url)
 			.then(res => res.json())
@@ -88,6 +88,7 @@ class App extends Component {
 		const lon = coords.longitude;
 		const today = new Date();
 		const todayData = sunCalc.getTimes(today, lat, lon);
+		console.log(todayData);
 		const tomorrow = new Date(today);
 		tomorrow.setDate(tomorrow.getDate() + 1);
 		const tomorrowData = sunCalc.getTimes(tomorrow, lat, lon);
@@ -104,7 +105,7 @@ class App extends Component {
 			sunData.dawn = tomorrowData.dawn;
 			sunData.dusk = tomorrowData.dusk;
 		}
-		this.displaySunData(sunData, null);
+		this.displaySunData(sunData);
 		return sunData;
 	}
 
@@ -188,6 +189,7 @@ class App extends Component {
 		let length = times.length;
 		let result = "";
 		let convertEarliest = "";
+		console.log(times);
 		
 		for (let i = 1; i < length; i++) { // start loop at 2nd time, end at penultimate
 			
@@ -209,8 +211,6 @@ class App extends Component {
 					} else {
 						convertEarliest = `${this.convertTime(earliest)}-`
 					}
-					console.log(`earliest: ${convertEarliest}`);
-					//let convertEarliest = ;
 					let convertLatest = this.convertTime(latest);
 					result += convertEarliest + convertLatest + ', '; // print and break for span
 				}
@@ -222,26 +222,19 @@ class App extends Component {
 
 		if (earliest === latest) {
 			let convertEarliest = this.convertTime(earliest);
-			result += convertEarliest; // print final singleton            
+			let convertEarliestPlusOne = this.convertTime(earliest + 1);
+			result += `${convertEarliest}-${convertEarliestPlusOne}`; // print final singleton            
 		} else {
-			if (earliest === now) {
-				convertEarliest = `Until `;
-			} else {
-				convertEarliest = `${this.convertTime(earliest)}-`
-			}
+			convertEarliest = `${this.convertTime(earliest)}-`
 			console.log(`earliest: ${convertEarliest}`);
-			//let convertEarliest = ;
-			let convertLatest = this.convertTime(latest);
+			let convertLatest = this.convertTime(latest + 1);
 			result += convertEarliest + convertLatest; // print final span
 		}
 		this.setState({[field]:result});
-		// if (earliest === now) {
-		// 	console.log(`Until ${times[times.length - 1] + 1}`);
-		// }
 	}
 
 	convertTime = time => {
-		const amPm = time >= 12 ? "PM" : "AM";
+		const amPm = time >= 12 && time < 24 ? "PM" : "AM";
 		const converted = (time % 12) || 12;
 		const timeString = `${converted}:00 ${amPm}`;
 		return timeString;
