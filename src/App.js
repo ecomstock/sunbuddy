@@ -58,8 +58,8 @@ class App extends Component {
 	}
 	
 	getWeatherData = coords => {
-		//const lat = coords.latitude;
-		//const lon = coords.longitude;
+		// const lat = coords.latitude;
+		// const lon = coords.longitude;
 		const lat = 34;
 		const lon = -118;
 		const url = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/c9390ab45282a0eb042232d180560a3d/${lat},${lon}`;
@@ -183,12 +183,12 @@ class App extends Component {
 	sortTimes = (times, field) => {
 		if (times.length === 0) return;
 		const now = new Date().getHours();
-		const endOfCurrentHour = now + 1;
 		let earliest = times[0];
 		let latest = earliest; // assume singleton
 		let length = times.length;
 		let result = "";
 		let convertEarliest = "";
+		let convertEndOfEarliest = "";
 		console.log(times);
 		
 		for (let i = 1; i < length; i++) { // start loop at 2nd time, end at penultimate
@@ -196,13 +196,11 @@ class App extends Component {
 			if (times[i] === latest + 1) { // if next time is one greater than "latest",
 				latest = times[i]; // increment latest
 			} else {
-				
 				if (earliest === latest) { // must be a singleton
 					if (earliest === now) {
-						let convertEndOfCurrentHour = this.convertTime(endOfCurrentHour);
-						convertEarliest = `Until ${convertEndOfCurrentHour}`;
+						convertEarliest = `Until ${this.convertTime(now + 1)}`;
 					} else {
-						convertEarliest = this.convertTime(earliest);
+						convertEarliest = `${this.convertTime(earliest)}-${this.convertTime(earliest + 1)}`;
 					}
 					result += convertEarliest + ', '; // print and break for singleton  
 				} else { // must be end of span
