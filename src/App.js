@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Condition from './Condition';
+import logo from "./logo.png";
 import './App.css';
 import { 
 	mdiWhiteBalanceSunny,
@@ -29,6 +30,8 @@ class App extends Component {
 		const coords = {};
 		coords.latitude  = position.coords.latitude;
 		coords.longitude = position.coords.longitude;
+		// coords.latitude  = 1;
+		// coords.longitude = 104;
 		this.getWeatherData(coords);
 		this.getCity(coords);
 	}
@@ -36,8 +39,6 @@ class App extends Component {
 	getCity = coords => {
 		const lat = coords.latitude;
 		const lon = coords.longitude; 
-		// const lat = 34;
-		// const lon = -118;
 		const url = `https://geocodeapi.p.rapidapi.com/GetLargestCities?latitude=${lat}&longitude=${lon}&range=50000`
 		fetch(url, {
 			"method": "GET",
@@ -58,10 +59,8 @@ class App extends Component {
 	}
 	
 	getWeatherData = coords => {
-		// const lat = coords.latitude;
-		// const lon = coords.longitude;
-		const lat = 34;
-		const lon = -118;
+		const lat = coords.latitude;
+		const lon = coords.longitude;
 		const url = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/c9390ab45282a0eb042232d180560a3d/${lat},${lon}`;
 		fetch(url)
 			.then(res => res.json())
@@ -82,10 +81,11 @@ class App extends Component {
 			)
 	}
 
-	getSunData = (coords) => {
+	getSunData = coords => {
 		const sunCalc = require("suncalc");
 		const lat = coords.latitude;
 		const lon = coords.longitude;
+		console.log(`lat: ${lat}`);
 		const today = new Date();
 		const todayData = sunCalc.getTimes(today, lat, lon);
 		console.log(todayData);
@@ -110,6 +110,7 @@ class App extends Component {
 	}
 
 	displaySunData = sunData => {
+		console.log(sunData);
 		const dawn = new Date(sunData.dawn).toLocaleTimeString([], {timeStyle: "short"});
 		const dusk = new Date(sunData.dusk).toLocaleTimeString([], {timeStyle: "short"});
 		this.setState({
@@ -243,7 +244,7 @@ class App extends Component {
 			<div className="container">
 				<Card className="card">
 					<div className="content">
-						<img src="https://via.placeholder.com/75" />
+						<img src={logo} />
 						<p className="text-large">{this.state.city}</p>
 						<p>{this.state.day}</p>
 						<div id="temperature">
