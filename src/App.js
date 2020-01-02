@@ -133,8 +133,8 @@ class App extends Component {
 
 	displayToday = today => {
 		this.setState({
-			lowTemp:Math.round(today.temperatureLow),
-			highTemp:Math.round(today.temperatureHigh)
+			lowTemp:Math.round(today.temperatureMin),
+			highTemp:Math.round(today.temperatureMax)
 		});
 	}
 
@@ -244,12 +244,12 @@ class App extends Component {
 			<div className="container">
 				<Card className="card">
 					<div className="content">
-						<img src={logo} />
-						<p className="text-large">{this.state.city}</p>
-						<p>{this.state.day}</p>
+						<img id="logo" src={logo} />
+						<p className="text-xl">{this.state.city}</p>
+						<p id="day">{this.state.day}</p>
 						<div id="temperature">
 							<p id="low-temp">{this.state.lowTemp}</p>
-							<p id="current-temp" className="text-large">{this.state.currentTemp}</p>
+							<p id="current-temp" className="text-xl">{this.state.currentTemp}</p>
 							<p id="high-temp">{this.state.highTemp}</p>
 						</div>
 						<Condition 
