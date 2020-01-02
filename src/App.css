@@ -6,17 +6,17 @@ body,
 	min-width: 100%;
 	display: flex;
 	flex-direction: column;
-	align-items: stretch;
-    background-color: white;
-    /* margin: 10%; */
-}
-html, body {
-	height: 100%;
-	margin: 0;
+	align-items: center;
+    background-color: rgba(21, 27, 31, .45);
 }
 
+/* html, body {
+	height: 100%;
+	margin: 0;
+} */
+
 .card {
-	min-height: 100vh;
+	/* min-height: 100vh; */
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -25,8 +25,17 @@ html, body {
 	background-color: orangered;
     padding: 10px;
     border-radius: 5px;
-	/* height: 100%; */
+	height: 100%;
+	max-width: 600px;
 	text-align: center;
+}
+
+#logo {
+	margin: 0 0 2% 0;
+}
+
+#day {
+	margin: 3%;
 }
 
 .condition, #temperature {
@@ -35,7 +44,13 @@ html, body {
 	justify-content: center;
 }
 
-.text-large {
+.text-xl {
+	font-size: 50px;
+	margin-top: 10px;
+	margin-bottom: 0;
+}
+
+.text-lg {
 	font-size: 40px;
 	margin: 0;
 }
@@ -56,5 +71,18 @@ html, body {
 	color: red;
 }
 
-
-
+@media (max-width: 600px) {
+	.card {
+		min-width: 100vw;
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		font-size: calc(10px + 2vmin);
+		background-color: orangered;
+		padding: 10px;
+		height: 100%;
+		text-align: center;
+	}
+}
