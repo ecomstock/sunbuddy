@@ -245,14 +245,14 @@ class App extends Component {
 				<Card className="card">
 					<div className="content">
 						<img id="logo" src={logo} />
-						<p className="text-xl">{this.state.city}</p>
-						<p id="day">{this.state.day}</p>
+						<p className="text-xl" style={{margin: 0}}>{this.state.city}</p>
+						<p id="day" style={{margin: 0}}>{this.state.day}</p>
 						<div id="temperature">
 							<p id="low-temp">{this.state.lowTemp}</p>
 							<p id="current-temp" className="text-xl">{this.state.currentTemp}</p>
 							<p id="high-temp">{this.state.highTemp}</p>
 						</div>
-						<Condition 
+						<Condition
 							iconName={mdiWhiteBalanceSunny}
 							iconTitle={"sunlight"}
 							iconSize={1}
