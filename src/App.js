@@ -16,6 +16,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import logo from "./logo.png";
 
 function Copyright() {
     return (
@@ -67,14 +68,21 @@ export default function SignInSide() {
             <Grid item xs={false} sm={4} md={7} className={classes.image} />
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                 <div className={classes.paper}>
-                    {/* <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon />
-                    </Avatar> */}
-                    <Grid>
-                        {/* logo */}
-                        {/* place */}
-                        {/* temperatures */}
-                    </Grid>
+                    <Typography>SUNBUDDY</Typography>
+                    <Typography>Portland</Typography>
+                    <Box item>
+                        <Grid container spacing={1}>
+                            <Grid item>
+                                <Typography color="primary">32</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Typography>37</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Typography color="error">41</Typography>
+                            </Grid>
+                        </Grid>
+                    </Box>
                     <List>
                         <ListItem>
                             <ListItemAvatar>
