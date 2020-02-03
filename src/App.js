@@ -65,6 +65,8 @@ export default function App() {
     
     const [city, setCity] = useState();
     const [currentTemp, setCurrentTemp] = useState();
+    const [minTemp, setMinTemp] = useState();
+    const [maxTemp, setMaxTemp] = useState();
 
     useEffect(() => {
         getNav();
@@ -132,7 +134,7 @@ export default function App() {
 		const today = data.daily.data[0];
 		const hourly = data.hourly.data;
 		displayCurrent(currentTemp);
-		//displayToday(today);
+		displayHiLo(today);
 		//filterHoursByDay(hourly, sunData);
     }
     
@@ -166,12 +168,12 @@ export default function App() {
     
     const displayCurrent = currentTemp => setCurrentTemp(currentTemp);
 
-    // const displayToday = today => {
-	// 	this.setState({
-	// 		lowTemp:Math.round(today.temperatureMin),
-	// 		highTemp:Math.round(today.temperatureMax)
-	// 	});
-    // }
+    const displayHiLo = today => {
+        const minTemp = Math.round(today.temperatureMin)
+        const maxTemp = Math.round(today.temperatureMax)
+        setMinTemp(minTemp);
+        setMaxTemp(maxTemp);
+    }
     
     // const filterHoursByDay = (hourly, sunData) => {
 	// 	const date = sunData.date.getDay();
@@ -201,13 +203,13 @@ export default function App() {
                     <Box item>
                         <Grid container spacing={1}>
                             <Grid item>
-                                <Typography color="primary">32</Typography>
+                                <Typography color="primary">{minTemp}</Typography>
                             </Grid>
                             <Grid item>
                                 <Typography>{currentTemp}</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography color="error">41</Typography>
+                                <Typography color="error">{maxTemp}</Typography>
                             </Grid>
                         </Grid>
                     </Box>
