@@ -52,10 +52,6 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
     },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(1),
-    },
 }));
 
 export default function App() {
@@ -67,7 +63,8 @@ export default function App() {
 		precip : "hour.precipIntensity >= 0.015 && hour.precipProbability >= 0.20"
     }
     
-    const [city, setCity] = React.useState();
+    const [city, setCity] = useState();
+    const [currentTemp, setCurrentTemp] = useState();
 
     useEffect(() => {
         getNav();
@@ -98,7 +95,6 @@ export default function App() {
 		})
 		.then(response => response.json())
 		.then(result => {
-			console.log(result);
             const city = result[0].City;
             setCity(city);
 		})
@@ -116,7 +112,7 @@ export default function App() {
 			.then(
 				(result) => {
 					console.log(result);
-					//this.exportData(coords, result);
+					exportData(coords, result);
 				},
 				// Note: it's important to handle errors here
 				// instead of a catch() block so that we don't swallow
@@ -128,7 +124,71 @@ export default function App() {
 				// });
 				// }
 			)
-	}
+    }
+    
+    const exportData = (coords, data) => {
+		//const sunData = getSunData(coords);
+		const currentTemp = Math.round(data.currently.temperature);
+		const today = data.daily.data[0];
+		const hourly = data.hourly.data;
+		displayCurrent(currentTemp);
+		//displayToday(today);
+		//filterHoursByDay(hourly, sunData);
+    }
+    
+    // const getSunData = coords => {
+	// 	const sunCalc = require("suncalc");
+	// 	const lat = coords.latitude;
+	// 	const lon = coords.longitude;
+	// 	console.log(`lat: ${lat}`);
+	// 	const today = new Date();
+	// 	const todayData = sunCalc.getTimes(today, lat, lon);
+	// 	console.log(todayData);
+	// 	const tomorrow = new Date(today);
+	// 	tomorrow.setDate(tomorrow.getDate() + 1);
+	// 	const tomorrowData = sunCalc.getTimes(tomorrow, lat, lon);
+	// 	const dusk = todayData.dusk;
+	// 	const sunData = {};
+	// 	if (today < dusk) {
+	// 		sunData.day = "today";
+	// 		sunData.date = today;
+	// 		sunData.dawn = todayData.dawn;
+	// 		sunData.dusk = todayData.dusk;
+	// 	} else {
+	// 		sunData.day = "tomorrow";
+	// 		sunData.date = tomorrow;
+	// 		sunData.dawn = tomorrowData.dawn;
+	// 		sunData.dusk = tomorrowData.dusk;
+	// 	}
+	// 	displaySunData(sunData);
+	// 	return sunData;
+    // }
+    
+    const displayCurrent = currentTemp => setCurrentTemp(currentTemp);
+
+    // const displayToday = today => {
+	// 	this.setState({
+	// 		lowTemp:Math.round(today.temperatureMin),
+	// 		highTemp:Math.round(today.temperatureMax)
+	// 	});
+    // }
+    
+    // const filterHoursByDay = (hourly, sunData) => {
+	// 	const date = sunData.date.getDay();
+	// 	const hours = hourly
+	// 		.filter(hour => new Date(hour.time * 1000).getDay() === date);
+	// 	this.getReadableTime(hours, sunData);
+    // }
+    
+    // const displaySunData = sunData => {
+	// 	console.log(sunData);
+	// 	const dawn = new Date(sunData.dawn).toLocaleTimeString([], {timeStyle: "short"});
+	// 	const dusk = new Date(sunData.dusk).toLocaleTimeString([], {timeStyle: "short"});
+	// 	this.setState({
+	// 		day:sunData.day,
+	// 		sunTime:`${dawn}-${dusk}`
+	// 	});
+	// }
 
     return (
         <Grid container component="main" className={classes.root}>
@@ -144,7 +204,7 @@ export default function App() {
                                 <Typography color="primary">32</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography>37</Typography>
+                                <Typography>{currentTemp}</Typography>
                             </Grid>
                             <Grid item>
                                 <Typography color="error">41</Typography>
