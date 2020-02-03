@@ -67,6 +67,8 @@ export default function App() {
     const [currentTemp, setCurrentTemp] = useState();
     const [minTemp, setMinTemp] = useState();
     const [maxTemp, setMaxTemp] = useState();
+    const [day, getDay] = useState();
+    const [daylightHours, getDaylightHours] = useState();
 
     useEffect(() => {
         getNav();
@@ -129,7 +131,7 @@ export default function App() {
     }
     
     const exportData = (coords, data) => {
-		//const sunData = getSunData(coords);
+		const sunData = getSunData(coords);
 		const currentTemp = Math.round(data.currently.temperature);
 		const today = data.daily.data[0];
 		const hourly = data.hourly.data;
@@ -138,33 +140,33 @@ export default function App() {
 		//filterHoursByDay(hourly, sunData);
     }
     
-    // const getSunData = coords => {
-	// 	const sunCalc = require("suncalc");
-	// 	const lat = coords.latitude;
-	// 	const lon = coords.longitude;
-	// 	console.log(`lat: ${lat}`);
-	// 	const today = new Date();
-	// 	const todayData = sunCalc.getTimes(today, lat, lon);
-	// 	console.log(todayData);
-	// 	const tomorrow = new Date(today);
-	// 	tomorrow.setDate(tomorrow.getDate() + 1);
-	// 	const tomorrowData = sunCalc.getTimes(tomorrow, lat, lon);
-	// 	const dusk = todayData.dusk;
-	// 	const sunData = {};
-	// 	if (today < dusk) {
-	// 		sunData.day = "today";
-	// 		sunData.date = today;
-	// 		sunData.dawn = todayData.dawn;
-	// 		sunData.dusk = todayData.dusk;
-	// 	} else {
-	// 		sunData.day = "tomorrow";
-	// 		sunData.date = tomorrow;
-	// 		sunData.dawn = tomorrowData.dawn;
-	// 		sunData.dusk = tomorrowData.dusk;
-	// 	}
-	// 	displaySunData(sunData);
-	// 	return sunData;
-    // }
+    const getSunData = coords => {
+		const sunCalc = require("suncalc");
+		const lat = coords.latitude;
+		const lon = coords.longitude;
+		console.log(`lat: ${lat}`);
+		const today = new Date();
+		const todayData = sunCalc.getTimes(today, lat, lon);
+		console.log(todayData);
+		const tomorrow = new Date(today);
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		const tomorrowData = sunCalc.getTimes(tomorrow, lat, lon);
+		const dusk = todayData.dusk;
+		const sunData = {};
+		if (today < dusk) {
+			sunData.day = "today";
+			sunData.date = today;
+			sunData.dawn = todayData.dawn;
+			sunData.dusk = todayData.dusk;
+		} else {
+			sunData.day = "tomorrow";
+			sunData.date = tomorrow;
+			sunData.dawn = tomorrowData.dawn;
+			sunData.dusk = tomorrowData.dusk;
+		}
+		displaySunData(sunData);
+		return sunData;
+    }
     
     const displayCurrent = currentTemp => setCurrentTemp(currentTemp);
 
@@ -182,15 +184,14 @@ export default function App() {
 	// 	this.getReadableTime(hours, sunData);
     // }
     
-    // const displaySunData = sunData => {
-	// 	console.log(sunData);
-	// 	const dawn = new Date(sunData.dawn).toLocaleTimeString([], {timeStyle: "short"});
-	// 	const dusk = new Date(sunData.dusk).toLocaleTimeString([], {timeStyle: "short"});
-	// 	this.setState({
-	// 		day:sunData.day,
-	// 		sunTime:`${dawn}-${dusk}`
-	// 	});
-	// }
+    const displaySunData = sunData => {
+        console.log(sunData);
+        const day = sunData.day;
+		const dawn = new Date(sunData.dawn).toLocaleTimeString([], {timeStyle: "short"});
+        const dusk = new Date(sunData.dusk).toLocaleTimeString([], {timeStyle: "short"});
+        getDay(day);
+        getDaylightHours(`${dawn} - ${dusk}`);
+	}
 
     return (
         <Grid container component="main" className={classes.root}>
@@ -200,7 +201,8 @@ export default function App() {
                 <div className={classes.paper}>
                     <Typography>SUNBUDDY</Typography>
                     <Typography>{city}</Typography>
-                    <Box item>
+                    <Typography>{day}</Typography>
+                    <div item>
                         <Grid container spacing={1}>
                             <Grid item>
                                 <Typography color="primary">{minTemp}</Typography>
@@ -212,7 +214,7 @@ export default function App() {
                                 <Typography color="error">{maxTemp}</Typography>
                             </Grid>
                         </Grid>
-                    </Box>
+                    </div>
                     <List>
                         <ListItem>
                             <ListItemAvatar>
@@ -220,7 +222,7 @@ export default function App() {
                                 <WbSunnyIcon />
                             </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary="10:00-6:00" secondary="Daylight hours" />
+                            <ListItemText primary={daylightHours} secondary="Daylight hours" />
                         </ListItem>
                         <ListItem>
                             <ListItemAvatar>
