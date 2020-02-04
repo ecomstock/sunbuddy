@@ -44,10 +44,12 @@ const useStyles = makeStyles(theme => ({
         backgroundPosition: 'center',
     },
     paper: {
-        margin: theme.spacing(6, 4),
+        //margin: theme.spacing(6, 4),
+        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
     },
     avatar: {
         margin: theme.spacing(1),
@@ -126,7 +128,6 @@ export default function App() {
 			.then(
 				(result) => {
                     exportData(coords, result);
-                    console.log(result);
 				},
 				// Note: it's important to handle errors here
 				// instead of a catch() block so that we don't swallow
@@ -322,7 +323,7 @@ export default function App() {
                         <Typography className={classes.thin} component="h2" variant="h4">{city}</Typography>
                     </Box>
                     <Typography  component="h3" variant="body2">{day}</Typography>
-                    <Box mt={2} item>
+                    <Box mt={2}>
                         <Grid container alignItems="center" spacing={1}>
                             <Grid item>
                                 <Typography className={classes.black} component="p" variant="body1" color="primary">{minTemp}</Typography>
