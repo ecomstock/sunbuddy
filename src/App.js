@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Fade from '@material-ui/core/Fade';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -21,7 +22,7 @@ function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
         {'Copyright © '}
-        <Link color="inherit" href="https://material-ui.com/">
+        <Link color="inherit" href="">
             Sunbuddy
         </Link>{' '}
         {new Date().getFullYear()}
@@ -43,7 +44,7 @@ const useStyles = makeStyles(theme => ({
         backgroundPosition: 'center',
     },
     paper: {
-        margin: theme.spacing(8, 4),
+        margin: theme.spacing(6, 4),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -51,6 +52,15 @@ const useStyles = makeStyles(theme => ({
     avatar: {
         margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
+    },
+    black: {
+        fontWeight: 900,
+    },
+    light: {
+        fontWeight: 300,
+    },
+    thin: {
+        fontWeight: 100,
     },
 }));
 
@@ -104,7 +114,6 @@ export default function App() {
             setCity(city);
 		})
 		// .catch(err => {
-		// 	console.log(err);
 		// });
 	}
 	
@@ -116,8 +125,8 @@ export default function App() {
 			.then(res => res.json())
 			.then(
 				(result) => {
-					console.log(result);
-					exportData(coords, result);
+                    exportData(coords, result);
+                    console.log(result);
 				},
 				// Note: it's important to handle errors here
 				// instead of a catch() block so that we don't swallow
@@ -145,10 +154,8 @@ export default function App() {
 		const sunCalc = require("suncalc");
 		const lat = coords.latitude;
 		const lon = coords.longitude;
-		console.log(`lat: ${lat}`);
 		const today = new Date();
 		const todayData = sunCalc.getTimes(today, lat, lon);
-		console.log(todayData);
 		const tomorrow = new Date(today);
 		tomorrow.setDate(tomorrow.getDate() + 1);
 		const tomorrowData = sunCalc.getTimes(tomorrow, lat, lon);
@@ -186,7 +193,6 @@ export default function App() {
     }
     
     const displaySunData = sunData => {
-        console.log(sunData);
         const day = sunData.day;
 		const dawn = new Date(sunData.dawn).toLocaleTimeString([], {timeStyle: "short"});
         const dusk = new Date(sunData.dusk).toLocaleTimeString([], {timeStyle: "short"});
@@ -197,7 +203,6 @@ export default function App() {
     const getReadableTime = hourly => {
 		const readable = hourly
 			.map(hour => ({...hour, time: new Date(hour.time * 1000).getHours()}));
-		console.log(readable);
 		filterForCondition(readable, conditions.uv, "exposureTime");
 		filterForCondition(readable, conditions.precip, "precipTime");
 		filterForCondition(readable, conditions.temp, "tempTime");
@@ -206,15 +211,12 @@ export default function App() {
     const filterForCondition = (data, condition, field) => {
 		const filtered = data
 			.filter(hour => (eval(condition)));
-		// console.log(filtered);
 		checkAllDay(data, filtered, field);
     }
     
     const checkAllDay = (unfiltered, filtered, field) => {
 		if (filtered.length === unfiltered.length) {
-			console.log("all day");
 			displayAllDay(field);
-			// getFilteredTimes(filtered, field); // don't forget to take this out
 		} else {
 			getFilteredTimes(filtered, field);
 		}
@@ -250,8 +252,6 @@ export default function App() {
 		let length = times.length;
 		let result = "";
 		let convertEarliest = "";
-		let convertEndOfEarliest = "";
-		console.log(times);
 		
 		for (let i = 1; i < length; i++) { // start loop at 2nd time, end at penultimate
 			
@@ -262,14 +262,14 @@ export default function App() {
 					if (earliest === now) {
 						convertEarliest = `Until ${convertTime(now + 1)}`;
 					} else {
-						convertEarliest = `${convertTime(earliest)}-${convertTime(earliest + 1)}`;
+						convertEarliest = `${convertTime(earliest)} - ${convertTime(earliest + 1)}`;
 					}
 					result += convertEarliest + ', '; // print and break for singleton  
 				} else { // must be end of span
 					if (earliest === now) {
 						convertEarliest = `Until `;
 					} else {
-						convertEarliest = `${convertTime(earliest)}-`
+						convertEarliest = `${convertTime(earliest)} - `
 					}
 					let convertLatest = convertTime(latest);
 					result += convertEarliest + convertLatest + ', '; // print and break for span
@@ -283,10 +283,9 @@ export default function App() {
 		if (earliest === latest) {
 			let convertEarliest = convertTime(earliest);
 			let convertEarliestPlusOne = convertTime(earliest + 1);
-			result += `${convertEarliest}-${convertEarliestPlusOne}`; // print final singleton            
+			result += `${convertEarliest} - ${convertEarliestPlusOne}`; // print final singleton            
 		} else {
-			convertEarliest = `${convertTime(earliest)}-`
-			console.log(`earliest: ${convertEarliest}`);
+			convertEarliest = `${convertTime(earliest)} - `
 			let convertLatest = convertTime(latest + 1);
 			result += convertEarliest + convertLatest; // print final span
 		}
@@ -318,22 +317,24 @@ export default function App() {
             <Grid item xs={false} sm={4} md={7} className={classes.image} />
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                 <div className={classes.paper}>
-                    <Typography>SUNBUDDY</Typography>
-                    <Typography>{city}</Typography>
-                    <Typography>{day}</Typography>
-                    <div item>
-                        <Grid container spacing={1}>
+                    <Typography component="h1" variant="overline">sunbuddy</Typography>
+                    <Box mt={2}>
+                        <Typography className={classes.thin} component="h2" variant="h4">{city}</Typography>
+                    </Box>
+                    <Typography  component="h3" variant="body2">{day}</Typography>
+                    <Box mt={2} item>
+                        <Grid container alignItems="center" spacing={1}>
                             <Grid item>
-                                <Typography color="primary">{minTemp}</Typography>
+                                <Typography className={classes.black} component="p" variant="body1" color="primary">{minTemp}</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography>{currentTemp}</Typography>
+                                <Typography component="p" variant="h4">{day === "today" ? currentTemp : "/"}</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography color="error">{maxTemp}</Typography>
+                                <Typography className={classes.black} component="p" variant="body1" color="error">{maxTemp}</Typography>
                             </Grid>
                         </Grid>
-                    </div>
+                    </Box>
                     <List>
                         <ListItem>
                             <ListItemAvatar>
@@ -341,7 +342,10 @@ export default function App() {
                                 <WbSunnyIcon />
                             </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary={daylightHours} secondary="Daylight hours" />
+                            <ListItemText
+                                primary={daylightHours} 
+                                secondary="Daylight hours" 
+                            />
                         </ListItem>
                         <ListItem>
                             <ListItemAvatar>
@@ -349,7 +353,10 @@ export default function App() {
                                 <WbCloudyIcon />
                             </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary={precipTime} secondary="Precipitation is expected" />
+                            <ListItemText
+                                primary={precipTime} 
+                                secondary={`Significant precipitation is ${precipTime ? `` : `not`} expected`}
+                            />
                         </ListItem>
                         <ListItem>
                             <ListItemAvatar>
@@ -357,7 +364,7 @@ export default function App() {
                                 <WarningIcon />
                             </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary={exposureTime} secondary="High UV &mdash; sunscreen is advisable" />
+                            <ListItemText primary={exposureTime} secondary={`Sunscreen is ${exposureTime ? `advisable` : `not necessary`}`} />
                         </ListItem>
                         <ListItem>
                             <ListItemAvatar>
@@ -365,10 +372,13 @@ export default function App() {
                                 <DirectionsRunIcon />
                             </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary={tempTime} secondary="Ideal temperature for outdoor exercise" />
+                            <ListItemText 
+                                primary={tempTime}
+                                secondary={`${tempTime ? `Favorable temperatures for outdoor exercise` : `Extreme temperatures`}`} 
+                            />
                         </ListItem>
                     </List>
-                    <Box mt={8}>
+                    <Box mt={2}>
                         <Copyright />
                     </Box>
                 </div>
