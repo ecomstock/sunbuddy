@@ -68,7 +68,10 @@ export default function App() {
     const [minTemp, setMinTemp] = useState();
     const [maxTemp, setMaxTemp] = useState();
     const [day, getDay] = useState();
-    const [daylightHours, getDaylightHours] = useState();
+    const [daylightHours, setDaylightHours] = useState();
+    const [exposureTime, setExposureTime] = useState();
+    const [precipTime, setPrecipTime] = useState();
+    const [tempTime, setTempTime] = useState();
 
     useEffect(() => {
         getNav();
@@ -80,8 +83,6 @@ export default function App() {
 		const coords = {};
 		coords.latitude  = position.coords.latitude;
 		coords.longitude = position.coords.longitude;
-		// coords.latitude  = 1;
-        // coords.longitude = 104;
         getCity(coords);
 		getWeatherData(coords);
     }
@@ -137,7 +138,7 @@ export default function App() {
 		const hourly = data.hourly.data;
 		displayCurrent(currentTemp);
 		displayHiLo(today);
-		//filterHoursByDay(hourly, sunData);
+		filterHoursByDay(hourly, sunData);
     }
     
     const getSunData = coords => {
@@ -177,12 +178,12 @@ export default function App() {
         setMaxTemp(maxTemp);
     }
     
-    // const filterHoursByDay = (hourly, sunData) => {
-	// 	const date = sunData.date.getDay();
-	// 	const hours = hourly
-	// 		.filter(hour => new Date(hour.time * 1000).getDay() === date);
-	// 	this.getReadableTime(hours, sunData);
-    // }
+    const filterHoursByDay = (hourly, sunData) => {
+		const date = sunData.date.getDay();
+		const hours = hourly
+			.filter(hour => new Date(hour.time * 1000).getDay() === date);
+		getReadableTime(hours, sunData);
+    }
     
     const displaySunData = sunData => {
         console.log(sunData);
@@ -190,7 +191,125 @@ export default function App() {
 		const dawn = new Date(sunData.dawn).toLocaleTimeString([], {timeStyle: "short"});
         const dusk = new Date(sunData.dusk).toLocaleTimeString([], {timeStyle: "short"});
         getDay(day);
-        getDaylightHours(`${dawn} - ${dusk}`);
+        setDaylightHours(`${dawn} - ${dusk}`);
+    }
+    
+    const getReadableTime = hourly => {
+		const readable = hourly
+			.map(hour => ({...hour, time: new Date(hour.time * 1000).getHours()}));
+		console.log(readable);
+		filterForCondition(readable, conditions.uv, "exposureTime");
+		filterForCondition(readable, conditions.precip, "precipTime");
+		filterForCondition(readable, conditions.temp, "tempTime");
+    }
+    
+    const filterForCondition = (data, condition, field) => {
+		const filtered = data
+			.filter(hour => (eval(condition)));
+		// console.log(filtered);
+		checkAllDay(data, filtered, field);
+    }
+    
+    const checkAllDay = (unfiltered, filtered, field) => {
+		if (filtered.length === unfiltered.length) {
+			console.log("all day");
+			displayAllDay(field);
+			// getFilteredTimes(filtered, field); // don't forget to take this out
+		} else {
+			getFilteredTimes(filtered, field);
+		}
+    }
+    
+    const displayAllDay = field => {
+		switch (field) {
+            case "exposureTime":
+                setExposureTime("All day");
+                break;
+            case "precipTime":
+                setPrecipTime("All day");
+                break;
+            case "tempTime":
+                setTempTime("All day");
+                break;
+            default:
+                break;
+        }
+    }
+    
+    const getFilteredTimes = (data, field) => {
+		const times = data
+			.map(hour => hour.time);
+		sortTimes(times, field);
+    }
+    
+    const sortTimes = (times, field) => {
+		if (times.length === 0) return;
+		const now = new Date().getHours();
+		let earliest = times[0];
+		let latest = earliest; // assume singleton
+		let length = times.length;
+		let result = "";
+		let convertEarliest = "";
+		let convertEndOfEarliest = "";
+		console.log(times);
+		
+		for (let i = 1; i < length; i++) { // start loop at 2nd time, end at penultimate
+			
+			if (times[i] === latest + 1) { // if next time is one greater than "latest",
+				latest = times[i]; // increment latest
+			} else {
+				if (earliest === latest) { // must be a singleton
+					if (earliest === now) {
+						convertEarliest = `Until ${convertTime(now + 1)}`;
+					} else {
+						convertEarliest = `${convertTime(earliest)}-${convertTime(earliest + 1)}`;
+					}
+					result += convertEarliest + ', '; // print and break for singleton  
+				} else { // must be end of span
+					if (earliest === now) {
+						convertEarliest = `Until `;
+					} else {
+						convertEarliest = `${convertTime(earliest)}-`
+					}
+					let convertLatest = convertTime(latest);
+					result += convertEarliest + convertLatest + ', '; // print and break for span
+				}
+				// begin new group
+				earliest = times[i];
+				latest = earliest;
+			}
+		}
+
+		if (earliest === latest) {
+			let convertEarliest = convertTime(earliest);
+			let convertEarliestPlusOne = convertTime(earliest + 1);
+			result += `${convertEarliest}-${convertEarliestPlusOne}`; // print final singleton            
+		} else {
+			convertEarliest = `${convertTime(earliest)}-`
+			console.log(`earliest: ${convertEarliest}`);
+			let convertLatest = convertTime(latest + 1);
+			result += convertEarliest + convertLatest; // print final span
+		}
+        switch (field) {
+            case "exposureTime":
+                setExposureTime(result);
+                break;
+            case "precipTime":
+                setPrecipTime(result);
+                break;
+            case "tempTime":
+                setTempTime(result);
+                break;
+            default:
+                break;
+        }
+    }
+    
+    const convertTime = time => {
+		const amPm = time >= 12 && time < 24 ? "PM" : "AM";
+		const converted = (time % 12) || 12;
+		const timeString = `${converted}:00 ${amPm}`;
+		return timeString;
 	}
 
     return (
@@ -230,7 +349,7 @@ export default function App() {
                                 <WbCloudyIcon />
                             </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary="10:00-6:00" secondary="Precipitation is expected" />
+                            <ListItemText primary={precipTime} secondary="Precipitation is expected" />
                         </ListItem>
                         <ListItem>
                             <ListItemAvatar>
@@ -238,7 +357,7 @@ export default function App() {
                                 <WarningIcon />
                             </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary="10:00-6:00" secondary="High UV &mdash; sunscreen is advisable" />
+                            <ListItemText primary={exposureTime} secondary="High UV &mdash; sunscreen is advisable" />
                         </ListItem>
                         <ListItem>
                             <ListItemAvatar>
@@ -246,7 +365,7 @@ export default function App() {
                                 <DirectionsRunIcon />
                             </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary="10:00-6:00" secondary="Ideal temperature for outdoor exercise" />
+                            <ListItemText primary={tempTime} secondary="Ideal temperature for outdoor exercise" />
                         </ListItem>
                     </List>
                     <Box mt={8}>
