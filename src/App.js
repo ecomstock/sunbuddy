@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Fade from '@material-ui/core/Fade';
+import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link';
@@ -16,7 +15,6 @@ import WbCloudyIcon from '@material-ui/icons/WbCloudy';
 import WarningIcon from '@material-ui/icons/Warning';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
 
 function Copyright() {
     return (
